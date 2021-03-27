@@ -20,7 +20,7 @@ local res = 64
 local checks = 128 * 128
 -- Starting point for biome checks. This also sets the y co-ordinate for all
 -- points checked, so the suitable biomes must be active at this y.
-local pos = {x = 0, y = 8, z = 0}
+local pos = {2519.1, 6.5, 1608.0}
 
 
 -- Table of suitable biomes
