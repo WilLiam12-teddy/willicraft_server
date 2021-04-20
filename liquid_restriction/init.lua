@@ -49,14 +49,14 @@ for liquidcount = 1, #liquid_list do
             on_place = function(itemstack, placer, pointed_thing)
                 local pname = placer:get_player_name()
                 local default_priv = priv_selection("spill", "lr_default")
-                local advanced_priv = priv_selection("server", "lr_advanced")
+                local advanced_priv = priv_selection("spill", "lr_advanced")
 
                 if not minetest.check_player_privs(pname, priv_selection(default_priv, "lr_default")) then
                     minetest.chat_send_player(pname, default_priv .. " priv required to use this node")
                     return
                 else
                     if (minetest.get_pointed_thing_position(pointed_thing).y > lr_height) then
-                        if not (minetest.check_player_privs(pname, priv_selection("server", "lr_advanced"))) then
+                        if not (minetest.check_player_privs(pname, priv_selection("spill", "lr_advanced"))) then
                             minetest.chat_send_player(pname, advanced_priv .. " priv requid at this height")
                             return
                         end
