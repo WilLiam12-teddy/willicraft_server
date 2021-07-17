@@ -2,6 +2,7 @@
 -- Baked Clay by TenPlus1
 
 local clay = {
+	{"natural", "Natural"},
 	{"white", "White"},
 	{"grey", "Grey"},
 	{"black", "Black"},
@@ -16,50 +17,60 @@ local clay = {
 	{"brown", "Brown"},
 	{"pink", "Pink"},
 	{"dark_grey", "Dark Grey"},
-	{"dark_green", "Dark Green"},
+	{"dark_green", "Dark Green"}
 }
 
+local techcnc_mod = minetest.get_modpath("technic_cnc")
 local stairs_mod = minetest.get_modpath("stairs")
 local stairsplus_mod = minetest.get_modpath("moreblocks")
 	and minetest.global_exists("stairsplus")
 
 for _, clay in pairs(clay) do
 
-	-- node definition
+	-- node
 
 	minetest.register_node("bakedclay:" .. clay[1], {
 		description = clay[2] .. " Baked Clay",
 		tiles = {"baked_clay_" .. clay[1] ..".png"},
 		groups = {cracky = 3, bakedclay = 1},
-		sounds = default.node_sound_stone_defaults(),
+		sounds = default.node_sound_stone_defaults()
 	})
 
-	-- craft from dye and any baked clay
+	-- craft recipe
 
-	minetest.register_craft({
-		output = "bakedclay:" .. clay[1] .. " 8",
-		recipe = {
-			{"group:bakedclay", "group:bakedclay", "group:bakedclay"},
-			{"group:bakedclay", "dye:" .. clay[1], "group:bakedclay"},
-			{"group:bakedclay", "group:bakedclay", "group:bakedclay"}
-		},
-	})
+	if clay[1] ~= "natural" then
 
-	-- register stairsplus stairs if found
+		minetest.register_craft({
+			output = "bakedclay:" .. clay[1] .. " 8",
+			recipe = {
+				{"group:bakedclay", "group:bakedclay", "group:bakedclay"},
+				{"group:bakedclay", "dye:" .. clay[1], "group:bakedclay"},
+				{"group:bakedclay", "group:bakedclay", "group:bakedclay"}
+			}
+		})
+	end
+
+	-- stairs plus
 	if stairsplus_mod then
 
-		stairsplus:register_all("bakedclay", "baked_clay_" .. clay[1], "bakedclay:" .. clay[1], {
+		stairsplus:register_all("bakedclay", "baked_clay_" .. clay[1],
+				"bakedclay:" .. clay[1], {
 			description = clay[2] .. " Baked Clay",
 			tiles = {"baked_clay_" .. clay[1] .. ".png"},
 			groups = {cracky = 3},
-			sounds = default.node_sound_stone_defaults(),
+			sounds = default.node_sound_stone_defaults()
 		})
 
-		stairsplus:register_alias_all("bakedclay", clay[1], "bakedclay", "baked_clay_" .. clay[1])
-		minetest.register_alias("stairs:slab_bakedclay_".. clay[1], "bakedclay:slab_baked_clay_" .. clay[1])
-		minetest.register_alias("stairs:stair_bakedclay_".. clay[1], "bakedclay:stair_baked_clay_" .. clay[1])
+		stairsplus:register_alias_all("bakedclay", clay[1],
+				"bakedclay", "baked_clay_" .. clay[1])
 
-	-- register all stair types for stairs redo
+		minetest.register_alias("stairs:slab_bakedclay_".. clay[1],
+				"bakedclay:slab_baked_clay_" .. clay[1])
+
+		minetest.register_alias("stairs:stair_bakedclay_".. clay[1],
+				"bakedclay:stair_baked_clay_" .. clay[1])
+
+	-- stairs redo
 	elseif stairs_mod and stairs.mod then
 
 		stairs.register_all("bakedclay_" .. clay[1], "bakedclay:" .. clay[1],
@@ -68,7 +79,7 @@ for _, clay in pairs(clay) do
 			clay[2] .. " Baked Clay",
 			default.node_sound_stone_defaults())
 
-	-- register stair and slab using default stairs
+	-- default stairs
 	elseif stairs_mod then
 
 		stairs.register_stair_and_slab("bakedclay_".. clay[1], "bakedclay:".. clay[1],
@@ -78,13 +89,72 @@ for _, clay in pairs(clay) do
 			clay[2] .. " Baked Clay Slab",
 			default.node_sound_stone_defaults())
 	end
+
+	-- register bakedclay for use in technic_cnc mod
+	if techcnc_mod then
+
+		technic_cnc.register_all("bakedclay:" .. clay[1],
+		{cracky = 3, not_in_creative_inventory = 1},
+		{"baked_clay_" .. clay[1] .. ".png"},
+		clay[2] .. " Baked Clay")
+	end
 end
+
+-- Terracotta blocks (textures by D3monPixel, thanks for use :)
+for _, clay in pairs(clay) do
+
+	if clay[1] ~= "natural" then
+
+		local texture = "baked_clay_terracotta_" .. clay[1] ..".png"
+
+		minetest.register_node("bakedclay:terracotta_" .. clay[1], {
+			description = clay[2] .. " Glazed Terracotta",
+			tiles = {
+				texture .. "",
+				texture .. "",
+				texture .. "^[transformR180",
+				texture .. "",
+				texture .. "^[transformR270",
+				texture .. "^[transformR90",
+			},
+			paramtype2 = "facedir",
+			groups = {cracky = 3, terracotta = 1},
+			sounds = default.node_sound_stone_defaults(),
+			on_place = minetest.rotate_node
+		})
+
+		minetest.register_craft({
+			type = "cooking",
+			output = "bakedclay:terracotta_" .. clay[1],
+			recipe = "bakedclay:" .. clay[1]
+		})
+	end
+end
+
+-- special light blue glazed terracotta block
+local texture = "baked_clay_terracotta_light_blue.png"
+
+minetest.register_node("bakedclay:terracotta_light_blue", {
+	description = "Light Blue Glazed Terracotta",
+	tiles = {
+		texture .. "",
+		texture .. "",
+		texture .. "^[transformR180",
+		texture .. "",
+		texture .. "^[transformR270",
+		texture .. "^[transformR90",
+	},
+	paramtype2 = "facedir",
+	groups = {cracky = 3, terracotta = 1},
+	sounds = default.node_sound_stone_defaults(),
+	on_place = minetest.rotate_node
+})
 
 -- cook clay block into white baked clay
 
 minetest.register_craft({
 	type = "cooking",
-	output = "bakedclay:white",
+	output = "bakedclay:natural",
 	recipe = "default:clay",
 })
 
@@ -98,20 +168,8 @@ minetest.register_craft( {
 
 minetest.register_craft( {
 	type = "shapeless",
-	output = "dye:grey 3",
-	recipe = {"dye:black", "dye:white", "dye:white"}
-})
-
-minetest.register_craft( {
-	type = "shapeless",
 	output = "dye:green 4",
 	recipe = {"default:cactus"}
-})
-
-minetest.register_craft( {
-	type = "shapeless",
-	output = "dye:black 4",
-	recipe = {"default:coal_lump"}
 })
 
 minetest.register_craft( {
@@ -120,7 +178,17 @@ minetest.register_craft( {
 	recipe = {"default:dry_shrub"}
 })
 
--- 2x2 red bakedclay makes 16x clay brick
+-- only add light grey recipe if unifieddye mod isnt present (conflict)
+if not minetest.get_modpath("unifieddyes") then
+
+	minetest.register_craft( {
+		type = "shapeless",
+		output = "dye:grey 3",
+		recipe = {"dye:black", "dye:white", "dye:white"}
+	})
+end
+
+-- 2x2 red baked clay makes 16x clay brick
 minetest.register_craft( {
 	output = "default:clay_brick 16",
 	recipe = {
@@ -161,10 +229,17 @@ local function add_simple_flower(name, desc, box, f_groups)
 end
 
 local flowers = {
-	{"delphinium", "Blue Delphinium", {-0.15, -0.5, -0.15, 0.15, 0.3, 0.15}, {color_cyan = 1}},
-	{"thistle", "Thistle", {-0.15, -0.5, -0.15, 0.15, 0.2, 0.15}, {color_magenta = 1}},
-	{"lazarus", "Lazarus Bell", {-0.15, -0.5, -0.15, 0.15, 0.2, 0.15}, {color_pink = 1}},
-	{"mannagrass", "Reed Mannagrass", {-0.15, -0.5, -0.15, 0.15, 0.2, 0.15}, {color_dark_green = 1}},
+	{"delphinium", "Blue Delphinium",
+	{-0.15, -0.5, -0.15, 0.15, 0.3, 0.15}, {color_cyan = 1}},
+
+	{"thistle", "Thistle",
+	{-0.15, -0.5, -0.15, 0.15, 0.2, 0.15}, {color_magenta = 1}},
+
+	{"lazarus", "Lazarus Bell",
+	{-0.15, -0.5, -0.15, 0.15, 0.2, 0.15}, {color_pink = 1}},
+
+	{"mannagrass", "Reed Mannagrass",
+	{-0.15, -0.5, -0.15, 0.15, 0.2, 0.15}, {color_dark_green = 1}}
 }
 
 for _,item in pairs(flowers) do
@@ -187,7 +262,7 @@ minetest.register_decoration({
 	},
 	y_min = 10,
 	y_max = 90,
-	decoration = "bakedclay:delphinium",
+	decoration = "bakedclay:delphinium"
 })
 
 minetest.register_decoration({
@@ -204,7 +279,7 @@ minetest.register_decoration({
 	},
 	y_min = 15,
 	y_max = 90,
-	decoration = "bakedclay:thistle",
+	decoration = "bakedclay:thistle"
 })
 
 minetest.register_decoration({
@@ -223,7 +298,7 @@ minetest.register_decoration({
 	y_max = 90,
 	decoration = "bakedclay:lazarus",
 	spawn_by = "default:jungletree",
-	num_spawn_by = 1,
+	num_spawn_by = 1
 })
 
 minetest.register_decoration({
@@ -242,29 +317,111 @@ minetest.register_decoration({
 	y_max = 15,
 	decoration = "bakedclay:mannagrass",
 	spawn_by = "group:water",
-	num_spawn_by = 1,
+	num_spawn_by = 1
 })
 
--- add lucky blocks
+-- lucky blocks
 
 if minetest.get_modpath("lucky_block") then
+
 local p = "bakedclay:"
+
 lucky_block:add_blocks({
 	{"dro", {"bakedclay:"}, 10, true},
 	{"fal", {p.."black", p.."blue", p.."brown", p.."cyan", p.."dark_green",
 		p.."dark_grey", p.."green", p.."grey", p.."magenta", p.."orange",
-		p.."pink", p.."red", p.."violet", p.."white", p.."yellow"}, 0},
+		p.."pink", p.."red", p.."violet", p.."white", p.."yellow", p.."natural"}, 0},
 	{"fal", {p.."black", p.."blue", p.."brown", p.."cyan", p.."dark_green",
 		p.."dark_grey", p.."green", p.."grey", p.."magenta", p.."orange",
-		p.."pink", p.."red", p.."violet", p.."white", p.."yellow"}, 0, true},
+		p.."pink", p.."red", p.."violet", p.."white", p.."yellow", p.."natural"}, 0, true},
 	{"dro", {p.."delphinium"}, 5},
 	{"dro", {p.."lazarus"}, 5},
 	{"dro", {p.."mannagrass"}, 5},
 	{"dro", {p.."thistle"}, 6},
-	{"flo", 5, {p.."black", p.."blue", p.."brown", p.."cyan", p.."dark_green",
-		p.."dark_grey", p.."green", p.."grey", p.."magenta", p.."orange",
-		p.."pink", p.."red", p.."violet", p.."white", p.."yellow"}, 2},
+	{"flo", 5, {p.."natural", p.."black", p.."blue", p.."brown", p.."cyan",
+		p.."dark_green", p.."dark_grey", p.."green", p.."grey", p.."magenta",
+		p.."orange", p.."pink", p.."red", p.."violet", p.."white", p.."yellow"}, 2},
+	{"nod", "default:chest", 0, {
+		{name = p.."natural", max = 30},
+		{name = p.."black", max = 30},
+		{name = p.."blue", max = 30},
+		{name = p.."brown", max = 30},
+		{name = p.."cyan", max = 30},
+		{name = p.."dark_green", max = 30},
+		{name = p.."dark_grey", max = 30},
+		{name = p.."green", max = 30},
+		{name = p.."grey", max = 30},
+		{name = p.."magenta", max = 30},
+		{name = p.."orange", max = 30},
+		{name = p.."pink", max = 30},
+		{name = p.."red", max = 30},
+		{name = p.."violet", max = 30},
+		{name = p.."white", max = 30},
+		{name = p.."yellow", max = 30}
+	}},
+})
+
+p = "bakedclay:terracotta_"
+
+lucky_block:add_blocks({
+	{"nod", "default:chest", 0, {
+		{name = p.."light_blue", max = 20},
+		{name = p.."black", max = 20},
+		{name = p.."blue", max = 20},
+		{name = p.."brown", max = 20},
+		{name = p.."cyan", max = 20},
+		{name = p.."dark_green", max = 20},
+		{name = p.."dark_grey", max = 20},
+		{name = p.."green", max = 20},
+		{name = p.."grey", max = 20},
+		{name = p.."magenta", max = 20},
+		{name = p.."orange", max = 20},
+		{name = p.."pink", max = 20},
+		{name = p.."red", max = 20},
+		{name = p.."violet", max = 20},
+		{name = p.."white", max = 20},
+		{name = p.."yellow", max = 20}
+	}}
 })
 end
+
+-- colored clay compatibility
+
+if minetest.settings:get_bool("colored_clay_compatibility") == true then
+
+local cc = {
+	{"black", "black"},
+	{"blue", "blue"},
+	{"bright", "natural"},
+	{"brown", "brown"},
+	{"cyan", "cyan"},
+	{"dark_green", "dark_green"},
+	{"dark_grey", "dark_grey"},
+	{"green", "green"},
+	{"grey", "grey"},
+	{"hardened", "natural"},
+	{"magenta", "magenta"},
+	{"orange", "orange"},
+	{"pink", "pink"},
+	{"red", "red"},
+	{"violet", "violet"},
+	{"white", "white"},
+	{"yellow", "yellow"}
+}
+
+for n = 1, #cc do
+
+	local nod1 = "colored_clay:" .. cc[n][1]
+	local nod2 = "bakedclay:" .. cc[n][2]
+
+	minetest.register_alias(nod1, nod2)
+
+	if stairsplus_mod then
+		stairsplus:register_alias_all("colored_clay", cc[n][1], "bakedclay", cc[n][2])
+	end
+end
+
+end
+
 
 print ("[MOD] Baked Clay loaded")

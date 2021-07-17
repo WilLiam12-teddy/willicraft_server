@@ -26,6 +26,7 @@ end
 
 if mg_name ~= "v6" and mg_name ~= "singlenode" then
 	minetest.register_decoration({
+		name = "larch:larch_tree",
 		deco_type = "schematic",
 		place_on = {"default:dirt_with_coniferous_litter"},
 		sidelen = 16,
@@ -33,7 +34,7 @@ if mg_name ~= "v6" and mg_name ~= "singlenode" then
 			offset = 0.0005,
 			scale = 0.0005,
 			spread = {x = 250, y = 250, z = 250},
-			seed = 2,
+			seed = 542,
 			octaves = 3,
 			persist = 0.66
 		},
@@ -54,7 +55,6 @@ end
 minetest.register_node("larch:sapling", {
 	description = S("Larch Tree Sapling"),
 	drawtype = "plantlike",
-	visual_scale = 1.0,
 	tiles = {"larch_sapling.png"},
 	inventory_image = "larch_sapling.png",
 	wield_image = "larch_sapling.png",
@@ -117,10 +117,7 @@ minetest.register_node("larch:wood", {
 minetest.register_node("larch:leaves", {
 	description = S("Larch Leaves"),
 	drawtype = "allfaces_optional",
-	visual_scale = 1.2,
 	tiles = {"larch_leaves.png"},
-	inventory_image = "larch_leaves.png",
-	wield_image = "larch_leaves.png",
 	paramtype = "light",
 	walkable = true,
 	waving = 1,
@@ -143,6 +140,7 @@ minetest.register_node("larch:moss", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	tiles = {"larch_moss.png"},
+	use_texture_alpha = true,
 	inventory_image = "larch_moss.png",
 	wield_image = "larch_moss.png",
 	node_box = {
@@ -197,9 +195,28 @@ default.register_leafdecay({
 	radius = 3,
 })
 
+-- Fence
+if minetest.settings:get_bool("cool_fences", true) then
+	local fence = {
+		description = S("Larch Tree Wood Fence"),
+		texture =  "larch_wood.png",
+		material = "larch:wood",
+		groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+		sounds = default.node_sound_wood_defaults(),
+	}
+	default.register_fence("larch:fence", table.copy(fence)) 
+	fence.description = S("Larch Tree Fence Rail")
+	default.register_fence_rail("larch:fence_rail", table.copy(fence))
+	
+	if minetest.get_modpath("doors") ~= nil then
+		fence.description = S("Larch Tree Fence Gate")
+		doors.register_fencegate("larch:gate", table.copy(fence))
+	end
+end
+
 --Stairs
 
-if minetest.get_modpath("stairs") ~= nil then	
+if minetest.get_modpath("stairs") ~= nil then
 	stairs.register_stair_and_slab(
 		"larch_trunk",
 		"larch:trunk",
@@ -211,8 +228,35 @@ if minetest.get_modpath("stairs") ~= nil then
 	)
 end
 
-if minetest.get_modpath("bonemeal") ~= nil then	
+-- stairsplus/moreblocks
+if minetest.get_modpath("moreblocks") then
+	stairsplus:register_all("larch", "wood", "larch:wood", {
+		description = "larch Tree",
+		tiles = {"larch_wood.png"},
+		groups = {choppy = 2, oddly_breakable_by_hand = 1, flammable = 3},
+		sounds = default.node_sound_wood_defaults(),
+	})
+end
+
+if minetest.get_modpath("bonemeal") ~= nil then
 	bonemeal:add_sapling({
 		{"larch:sapling", grow_new_larch_tree, "soil"},
 	})
 end
+
+--Door
+
+if minetest.get_modpath("doors") ~= nil then
+	doors.register("door_larch_wood", {
+			tiles = {{ name = "larch_door_wood.png", backface_culling = true }},
+			description = S("Larch Wood Door"),
+			inventory_image = "larch_item_wood.png",
+			groups = {node = 1, choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+			recipe = {
+				{"larch:wood", "larch:wood"},
+				{"larch:wood", "larch:wood"},
+				{"larch:wood", "larch:wood"},
+			}
+	})
+end
+

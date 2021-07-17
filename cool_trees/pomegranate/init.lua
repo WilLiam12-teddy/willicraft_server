@@ -50,6 +50,7 @@ end
 
 if mg_name ~= "v6" and mg_name ~= "singlenode" then
 	minetest.register_decoration({
+	name = "pomegranate:pomegranate_tree",
 		deco_type = "schematic",
 		place_on = {"default:dry_dirt"},
 		sidelen = 16,
@@ -57,7 +58,7 @@ if mg_name ~= "v6" and mg_name ~= "singlenode" then
 			offset = 0.0005,
 			scale = 0.00004,
 			spread = {x = 250, y = 250, z = 250},
-			seed = 2,
+			seed = 978,
 			octaves = 3,
 			persist = 0.66
 		},
@@ -77,7 +78,6 @@ end
 minetest.register_node("pomegranate:sapling", {
 	description = S("Pomegranate Tree Sapling"),
 	drawtype = "plantlike",
-	visual_scale = 1.0,
 	tiles = {"pomegranate_sapling.png"},
 	inventory_image = "pomegranate_sapling.png",
 	wield_image = "pomegranate_sapling.png",
@@ -137,10 +137,7 @@ minetest.register_node("pomegranate:wood", {
 minetest.register_node("pomegranate:leaves", {
 	description = S("Pomegranate Tree Leaves"),
 	drawtype = "allfaces_optional",
-	visual_scale = 1.2,
 	tiles = {"pomegranate_leaves.png"},
-	inventory_image = "pomegranate_leaves.png",
-	wield_image = "pomegranate_leaves.png",
 	paramtype = "light",
 	walkable = true,
 	waving = 1,
@@ -207,6 +204,25 @@ default.register_leafdecay({
 	radius = 3,
 })
 
+-- Fence
+if minetest.settings:get_bool("cool_fences", true) then
+	local fence = {
+		description = S("Pomegranate Tree Wood Fence"),
+		texture =  "pomegranate_wood.png",
+		material = "pomegranate:wood",
+		groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+		sounds = default.node_sound_wood_defaults(),
+	}
+	default.register_fence("pomegranate:fence", table.copy(fence)) 
+	fence.description = S("Pomegranate Tree Fence Rail")
+	default.register_fence_rail("pomegranate:fence_rail", table.copy(fence))
+	
+	if minetest.get_modpath("doors") ~= nil then
+		fence.description = S("Pomegranate Tree Fence Gate")
+		doors.register_fencegate("pomegranate:gate", table.copy(fence))
+	end
+end
+
 --Stairs
 
 if minetest.get_modpath("stairs") ~= nil then
@@ -219,6 +235,16 @@ if minetest.get_modpath("stairs") ~= nil then
 		S("Pomegranate Tree Slab"),
 		default.node_sound_wood_defaults()
 	)
+end
+
+-- stairsplus/moreblocks
+if minetest.get_modpath("moreblocks") then
+	stairsplus:register_all("pomegranate", "wood", "pomegranate:wood", {
+		description = "Pomegranate Tree",
+		tiles = {"pomegranate_wood.png"},
+		groups = {choppy = 2, oddly_breakable_by_hand = 1, flammable = 3},
+		sounds = default.node_sound_wood_defaults(),
+	})
 end
 
 if minetest.get_modpath("bonemeal") ~= nil then

@@ -50,6 +50,7 @@ end
 
 if mg_name ~= "v6" and mg_name ~= "singlenode" then
 	minetest.register_decoration({
+		name = "clementinetree:clementine_tree",
 		deco_type = "schematic",
 		place_on = {"default:dirt_with_grass"},
 		sidelen = 16,
@@ -57,7 +58,7 @@ if mg_name ~= "v6" and mg_name ~= "singlenode" then
 			offset = 0.0005,
 			scale = 0.00004,
 			spread = {x = 250, y = 250, z = 250},
-			seed = 2,
+			seed = 3456,
 			octaves = 3,
 			persist = 0.66
 		},
@@ -77,7 +78,6 @@ end
 minetest.register_node("clementinetree:sapling", {
 	description = S("Clementine Tree Sapling"),
 	drawtype = "plantlike",
-	visual_scale = 1.0,
 	tiles = {"clementinetree_sapling.png"},
 	inventory_image = "clementinetree_sapling.png",
 	wield_image = "clementinetree_sapling.png",
@@ -137,10 +137,7 @@ minetest.register_node("clementinetree:wood", {
 minetest.register_node("clementinetree:leaves", {
 	description = S("Clementine Tree Leaves"),
 	drawtype = "allfaces_optional",
-	visual_scale = 1.2,
 	tiles = {"clementinetree_leaves.png"},
-	inventory_image = "clementinetree_leaves.png",
-	wield_image = "clementinetree_leaves.png",
 	paramtype = "light",
 	walkable = true,
 	waving = 1,
@@ -196,6 +193,25 @@ default.register_leafdecay({
 	radius = 3,
 })
 
+-- Fence
+if minetest.settings:get_bool("cool_fences", true) then
+	local fence = {
+		description = S("Clementine Tree Wood Fence"),
+		texture =  "clementinetree_wood.png",
+		material = "clementinetree:wood",
+		groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+		sounds = default.node_sound_wood_defaults(),
+	}
+	default.register_fence("clementinetree:fence", table.copy(fence)) 
+	fence.description = S("Clementine Tree Fence Rail")
+	default.register_fence_rail("clementinetree:fence_rail", table.copy(fence))
+	
+	if minetest.get_modpath("doors") ~= nil then
+		fence.description = S("Clementine Tree Fence Gate")
+		doors.register_fencegate("clementinetree:gate", table.copy(fence))
+	end
+end
+
 --Stairs
 
 if minetest.get_modpath("stairs") ~= nil then
@@ -210,8 +226,35 @@ if minetest.get_modpath("stairs") ~= nil then
 	)
 end
 
-if minetest.get_modpath("bonemeal") ~= nil then	
+-- stairsplus/moreblocks
+if minetest.get_modpath("moreblocks") then
+	stairsplus:register_all("clementinetree", "wood", "clementinetree:wood", {
+		description = "Clementine Tree",
+		tiles = {"clementinetree_wood.png"},
+		groups = {choppy = 2, oddly_breakable_by_hand = 1, flammable = 3},
+		sounds = default.node_sound_wood_defaults(),
+	})
+end
+
+if minetest.get_modpath("bonemeal") ~= nil then
 	bonemeal:add_sapling({
 		{"clementinetree:sapling", grow_new_clementinetree_tree, "soil"},
+	})
+end
+
+
+--Door
+
+if minetest.get_modpath("doors") ~= nil then
+	doors.register("door_clementinetree_wood", {
+			tiles = {{ name = "clementinetree_door_wood.png", backface_culling = true }},
+			description = S("Clementine Wood Door"),
+			inventory_image = "clementinetree_item_wood.png",
+			groups = {node = 1, choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+			recipe = {
+				{"clementinetree:wood", "clementinetree:wood"},
+				{"clementinetree:wood", "clementinetree:wood"},
+				{"clementinetree:wood", "clementinetree:wood"},
+			}
 	})
 end

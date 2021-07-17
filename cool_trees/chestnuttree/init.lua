@@ -38,7 +38,7 @@ minetest.register_node("chestnuttree:bur", {
 
 minetest.register_craftitem("chestnuttree:fruit", {
 	description = S("Chestnut"),
-	inventory_image = "chestnuttree_fruit.png",	
+	inventory_image = "chestnuttree_fruit.png",
 	on_use = minetest.item_eat(2),
 	groups = {flammable = 2, food = 2},
 })
@@ -67,19 +67,38 @@ end
 --
 
 if mg_name ~= "v6" and mg_name ~= "singlenode" then
+
+	local place_on
+	local biomes
+	local offset
+	local scale
+
+	if minetest.get_modpath("rainf") then
+		place_on = "rainf:meadow"
+		biomes = "rainf"
+		offset = 0.0008
+		scale = 0.00004
+	else
+		place_on = "default:dirt_with_grass"
+		biomes = "grassland"
+		offset = 0.00005
+		scale = 0.00004
+	end
+
 	minetest.register_decoration({
+		name = "chestnuttree:chestnut_tree",
 		deco_type = "schematic",
-		place_on = {"default:dirt_with_grass"},
+		place_on = {place_on},
 		sidelen = 16,
 		noise_params = {
-			offset = 0.00005,
-			scale = 0.00004,
+			offset = offset,
+			scale = scale,
 			spread = {x = 250, y = 250, z = 250},
-			seed = 2,
+			seed = 278,
 			octaves = 3,
 			persist = 0.66
 		},
-		biomes = {"grassland"},
+		biomes = {biomes},
 		y_min = 1,
 		y_max = 80,
 		schematic = modpath.."/schematics/chestnuttree.mts",
@@ -96,7 +115,6 @@ end
 minetest.register_node("chestnuttree:sapling", {
 	description = S("Chestnut Tree Sapling"),
 	drawtype = "plantlike",
-	visual_scale = 1.0,
 	tiles = {"chestnuttree_sapling.png"},
 	inventory_image = "chestnuttree_sapling.png",
 	wield_image = "chestnuttree_sapling.png",
@@ -156,10 +174,7 @@ minetest.register_node("chestnuttree:wood", {
 minetest.register_node("chestnuttree:leaves", {
 	description = S("Chestnut Tree Leaves"),
 	drawtype = "allfaces_optional",
-	visual_scale = 1.2,
 	tiles = {"chestnuttree_leaves.png"},
-	inventory_image = "chestnuttree_leaves.png",
-	wield_image = "chestnuttree_leaves.png",
 	paramtype = "light",
 	walkable = true,
 	waving = 1,
@@ -215,6 +230,25 @@ default.register_leafdecay({
 	radius = 3,
 })
 
+-- Fence
+if minetest.settings:get_bool("cool_fences", true) then
+	local fence = {
+		description = S("Chestnut Tree Wood Fence"),
+		texture =  "chestnuttree_wood.png",
+		material = "chestnuttree:wood",
+		groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+		sounds = default.node_sound_wood_defaults(),
+	}
+	default.register_fence("chestnuttree:fence", table.copy(fence)) 
+	fence.description = S("Chestnut Tree Fence Rail")
+	default.register_fence_rail("chestnuttree:fence_rail", table.copy(fence))
+	
+	if minetest.get_modpath("doors") ~= nil then
+		fence.description = S("Chestnut Tree Fence Gate")
+		doors.register_fencegate("chestnuttree:gate", table.copy(fence))
+	end
+end
+
 --Stairs
 
 if minetest.get_modpath("stairs") ~= nil then
@@ -229,8 +263,34 @@ if minetest.get_modpath("stairs") ~= nil then
 	)
 end
 
-if minetest.get_modpath("bonemeal") ~= nil then	
+-- stairsplus/moreblocks
+if minetest.get_modpath("moreblocks") then
+	stairsplus:register_all("chestnuttree", "wood", "chestnuttree:wood", {
+		description = "Chestnut Tree",
+		tiles = {"chestnuttree_wood.png"},
+		groups = {choppy = 2, oddly_breakable_by_hand = 1, flammable = 3},
+		sounds = default.node_sound_wood_defaults(),
+	})
+end
+
+if minetest.get_modpath("bonemeal") ~= nil then
 	bonemeal:add_sapling({
 		{"chestnuttree:sapling", grow_new_chestnuttree_tree, "soil"},
+	})
+end
+
+--Door
+
+if minetest.get_modpath("doors") ~= nil then
+	doors.register("door_chestnut_wood", {
+			tiles = {{ name = "chesnuttree_door_wood.png", backface_culling = true }},
+			description = S("Chestnut Wood Door"),
+			inventory_image = "chestnuttree_item_wood.png",
+			groups = {node = 1, choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+			recipe = {
+				{"chestnuttree:wood", "chestnuttree:wood"},
+				{"chestnuttree:wood", "chestnuttree:wood"},
+				{"chestnuttree:wood", "chestnuttree:wood"},
+			}
 	})
 end

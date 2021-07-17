@@ -25,6 +25,7 @@ end
 --
 
 if mg_name ~= "v6" and mg_name ~= "singlenode" then
+	name = "baldcypress:baldcypress_tree",
 	minetest.register_decoration({
 		deco_type = "schematic",
 		place_on = {"default:sand"},
@@ -33,7 +34,7 @@ if mg_name ~= "v6" and mg_name ~= "singlenode" then
 			offset = 0.0005,
 			scale = 0.0005,
 			spread = {x = 250, y = 250, z = 250},
-			seed = 2,
+			seed = 678,
 			octaves = 3,
 			persist = 0.66
 		},
@@ -54,7 +55,6 @@ end
 minetest.register_node("baldcypress:sapling", {
 	description = S("Bald Cypress Tree Sapling"),
 	drawtype = "plantlike",
-	visual_scale = 1.0,
 	tiles = {"baldcypress_sapling.png"},
 	inventory_image = "baldcypress_sapling.png",
 	wield_image = "baldcypress_sapling.png",
@@ -117,10 +117,7 @@ minetest.register_node("baldcypress:wood", {
 minetest.register_node("baldcypress:leaves", {
 	description = S("Bald Cypress Leaves"),
 	drawtype = "allfaces_optional",
-	visual_scale = 1.2,
 	tiles = {"baldcypress_leaves.png"},
-	inventory_image = "baldcypress_leaves.png",
-	wield_image = "baldcypress_leaves.png",
 	paramtype = "light",
 	walkable = true,
 	waving = 1,
@@ -134,6 +131,47 @@ minetest.register_node("baldcypress:leaves", {
 	},
 	sounds = default.node_sound_leaves_defaults(),
 	after_place_node = default.after_place_leaves,
+})
+
+minetest.register_node("baldcypress:dry_branches", {
+	description = S("Bald Cypress Dry Branches"),
+	drawtype = "nodebox",
+	walkable = true,
+	paramtype = "light",
+	paramtype2 = "facedir",
+	tiles = {"baldcypress_dry_branches.png"},
+	use_texture_alpha = true,
+	inventory_image = "baldcypress_dry_branches.png",
+	wield_image = "baldcypress_dry_branches.png",
+	node_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, 0.49, 0.5, 0.5, 0.5}
+	},
+	groups = {
+		snappy = 2, flammable = 3, oddly_breakable_by_hand = 3, choppy = 2, carpet = 1, leafdecay = 3, leaves = 1
+	},
+	sounds = default.node_sound_leaves_defaults(),
+})
+
+minetest.register_node("baldcypress:liana", {
+	description = S("Bald Cypress Liana"),
+	drawtype = "nodebox",
+	walkable = false,
+	paramtype = "light",
+	paramtype2 = "facedir",
+	tiles = {"baldcypress_liana.png"},
+	use_texture_alpha = true,
+	inventory_image = "baldcypress_liana.png",
+	wield_image = "baldcypress_liana.png",
+	is_ground_content = false,
+	node_box = {
+		type = "fixed",
+		fixed = {-0.25, -0.5, 0.0, 0.25, 0.5, 0.0}
+	},
+	groups = {
+		snappy = 2, flammable = 3, oddly_breakable_by_hand = 3, choppy = 2, carpet = 1, leafdecay = 3, leaves = 1,
+	},
+	sounds = default.node_sound_leaves_defaults(),
 })
 
 --
@@ -177,6 +215,25 @@ default.register_leafdecay({
 	radius = 3,
 })
 
+-- Fence
+if minetest.settings:get_bool("cool_fences", true) then
+	local fence = {
+		description = S("Bald Cypress Wood Fence"),
+		texture =  "baldcypress_wood.png",
+		material = "baldcypress:wood",
+		groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+		sounds = default.node_sound_wood_defaults(),
+	}
+	default.register_fence("baldcypress:fence", table.copy(fence)) 
+	fence.description = S("Bald Cypress Fence Rail")
+	default.register_fence_rail("baldcypress:fence_rail", table.copy(fence))
+	
+	if minetest.get_modpath("doors") ~= nil then
+		fence.description = S("Bald Cypress Fence Gate")
+		doors.register_fencegate("baldcypress:gate", table.copy(fence))
+	end
+end
+
 --Stairs
 
 if minetest.get_modpath("stairs") ~= nil then
@@ -189,6 +246,16 @@ if minetest.get_modpath("stairs") ~= nil then
 		S("Bald Cypress Slab"),
 		default.node_sound_wood_defaults()
 	)
+end
+
+-- stairsplus/moreblocks
+if minetest.get_modpath("moreblocks") then
+	stairsplus:register_all("baldcypress", "wood", "baldcypress:wood", {
+		description = "Bald Cypress",
+		tiles = {"baldcypress_wood.png"},
+		groups = {choppy = 2, oddly_breakable_by_hand = 1, flammable = 3},
+		sounds = default.node_sound_wood_defaults(),
+	})
 end
 
 --Support for bonemeal

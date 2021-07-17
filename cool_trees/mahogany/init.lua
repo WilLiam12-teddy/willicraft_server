@@ -6,7 +6,6 @@ local modname = "mahogany"
 local modpath = minetest.get_modpath(modname)
 local mg_name = minetest.get_mapgen_setting("mg_name")
 
-
 -- internationalization boilerplate
 local S = minetest.get_translator(minetest.get_current_modname())
 
@@ -28,6 +27,7 @@ end
 
 if mg_name ~= "v6" and mg_name ~= "singlenode" then
 	minetest.register_decoration({
+		name = "mahogany:mahogany_tree",
 		deco_type = "schematic",
 		place_on = {"default:dirt_with_rainforest_litter"},
 		sidelen = 16,
@@ -35,7 +35,7 @@ if mg_name ~= "v6" and mg_name ~= "singlenode" then
 			offset = 0.005,
 			scale = 0.005,
 			spread = {x = 250, y = 250, z = 250},
-			seed = 2,
+			seed = 345,
 			octaves = 3,
 			persist = 0.66
 		},
@@ -56,7 +56,6 @@ end
 minetest.register_node("mahogany:sapling", {
 	description = S("Mahogany Tree Sapling"),
 	drawtype = "plantlike",
-	visual_scale = 1.0,
 	tiles = {"mahogany_sapling.png"},
 	inventory_image = "mahogany_sapling.png",
 	wield_image = "mahogany_sapling.png",
@@ -119,10 +118,7 @@ minetest.register_node("mahogany:wood", {
 minetest.register_node("mahogany:leaves", {
 	description = S("Mahogany Leaves"),
 	drawtype = "allfaces_optional",
-	visual_scale = 1.2,
 	tiles = {"mahogany_leaves.png"},
-	inventory_image = "mahogany_leaves.png",
-	wield_image = "mahogany_leaves.png",
 	paramtype = "light",
 	walkable = true,
 	waving = 1,
@@ -149,6 +145,7 @@ minetest.register_node("mahogany:creeper", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	tiles = {"mahogany_creeper.png"},
+	use_texture_alpha = true,
 	inventory_image = "mahogany_creeper.png",
 	wield_image = "mahogany_creeper.png",
 	node_box = {
@@ -168,6 +165,7 @@ minetest.register_node("mahogany:flower_creeper", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	tiles = {"mahogany_flower_creeper.png"},
+	use_texture_alpha = true,
 	inventory_image = "mahogany_flower_creeper.png",
 	wield_image = "mahogany_flower_creeper.png",
 	node_box = {
@@ -187,6 +185,7 @@ minetest.register_node("mahogany:hanging_creeper", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	tiles = {"mahogany_hanging_creeper.png"},
+	use_texture_alpha = true,
 	inventory_image = "mahogany_hanging_creeper.png",
 	wield_image = "mahogany_hanging_creeper.png",
 	node_box = {
@@ -239,9 +238,28 @@ default.register_leafdecay({
 	radius = 3,
 })
 
+-- Fence
+if minetest.settings:get_bool("cool_fences", true) then
+	local fence = {
+		description = S("Mahogany Wood Fence"),
+		texture =  "mahogany_wood.png",
+		material = "mahogany:wood",
+		groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+		sounds = default.node_sound_wood_defaults(),
+	}
+	default.register_fence("mahogany:fence", table.copy(fence)) 
+	fence.description = S("Mahogany Fence Rail")
+	default.register_fence_rail("mahogany:fence_rail", table.copy(fence))
+	
+	if minetest.get_modpath("doors") ~= nil then
+		fence.description = S("Mahogany Fence Gate")
+		doors.register_fencegate("mahogany:gate", table.copy(fence))
+	end
+end
+
 --Stairs
 
-if minetest.get_modpath("stairs") ~= nil then	
+if minetest.get_modpath("stairs") ~= nil then
 	stairs.register_stair_and_slab(
 		"mahogany_trunk",
 		"mahogany:trunk",
@@ -253,9 +271,19 @@ if minetest.get_modpath("stairs") ~= nil then
 	)
 end
 
+-- stairsplus/moreblocks
+if minetest.get_modpath("moreblocks") then
+	stairsplus:register_all("mahogany", "wood", "mahogany:wood", {
+		description = "Mahogany",
+		tiles = {"mahogany_wood.png"},
+		groups = {choppy = 2, oddly_breakable_by_hand = 1, flammable = 3},
+		sounds = default.node_sound_wood_defaults(),
+	})
+end
+
 --Support for bonemeal
 
-if minetest.get_modpath("bonemeal") ~= nil then	
+if minetest.get_modpath("bonemeal") ~= nil then
 	bonemeal:add_sapling({
 		{"mahogany:sapling", grow_new_mahogany_tree, "soil"},
 	})

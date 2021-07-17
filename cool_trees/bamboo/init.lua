@@ -5,8 +5,6 @@
 -- Thanks to VanessaE, Tenplus1, paramat and all others who
 -- contribute to this mod
 
-local modname = "bamboo"
-
 -- internationalization boilerplate
 local S = minetest.get_translator(minetest.get_current_modname())
 
@@ -117,6 +115,7 @@ end
 --
 
 minetest.register_decoration({
+	name = "bamboo:bamboo_tree",
 	deco_type = "schematic",
 	place_on = {"default:dirt_with_grass"},
 	sidelen = 16,
@@ -148,7 +147,8 @@ minetest.register_node("bamboo:trunk", {
 	wield_image = "bamboo.png",
 	paramtype = "light",
 	sunlight_propagates = true,
-	walkable = true,
+	walkable = false,
+	climbable = true,
 	selection_box = {
 		type = "fixed",
 		fixed = {-0.3, -0.5, -0.3, 0.3, 0.5, 0.3}
@@ -177,12 +177,10 @@ minetest.register_node("bamboo:wood", {
 minetest.register_node("bamboo:leaves", {
 	description = S("Bamboo Leaves"),
 	drawtype = "allfaces_optional",
-	visual_scale = 1.2,
 	tiles = {"bamboo_leaves.png"},
-	inventory_image = "bamboo_leaves.png",
-	wield_image = "bamboo_leaves.png",
 	paramtype = "light",
-	walkable = true,
+	walkable = false,
+	climbable = true,
 	waving = 1,
 	groups = {snappy = 3, leafdecay = 3, leaves = 1, flammable = 2},
 	drop = {
@@ -250,9 +248,28 @@ if minetest.get_modpath("bonemeal") ~= nil then
 	})
 end
 
+-- Fence
+if minetest.settings:get_bool("cool_fences", true) then
+	local fence = {
+		description = S("Bamboo Wood Fence"),
+		texture =  "bamboo_floor.png",
+		material = "bamboo:wood",
+		groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+		sounds = default.node_sound_wood_defaults(),
+	}
+	default.register_fence("bamboo:fence", table.copy(fence)) 
+	fence.description = S("Bamboo Fence Rail")
+	default.register_fence_rail("bamboo:fence_rail", table.copy(fence))
+	
+	if minetest.get_modpath("doors") ~= nil then
+		fence.description = S("Bamboo Fence Gate")
+		doors.register_fencegate("bamboo:gate", table.copy(fence))
+	end
+end
+
 --Stairs
 
-if minetest.get_modpath("stairs") ~= nil then	
+if minetest.get_modpath("stairs") ~= nil then
 	stairs.register_stair_and_slab(
 		"bamboo_trunk",
 		"bamboo:trunk",

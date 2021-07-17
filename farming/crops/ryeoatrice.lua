@@ -18,12 +18,15 @@ minetest.override_item("farming:rye", {
 	groups = {food_rye = 1, flammable = 4}
 })
 
+minetest.override_item("farming:rye_1", {drop = {}})
+minetest.override_item("farming:rye_2", {drop = {}})
+minetest.override_item("farming:rye_3", {drop = {}})
+
 minetest.register_craft({
-	type = "shapeless",
 	output = "farming:flour",
 	recipe = {
-		"farming:rye", "farming:rye", "farming:rye", "farming:rye",
-		"farming:mortar_pestle"
+		{"farming:rye", "farming:rye", "farming:rye"},
+		{"farming:rye", "farming:mortar_pestle", ""}
 	},
 	replacements = {{"group:food_mortar_pestle", "farming:mortar_pestle"}}
 })
@@ -43,12 +46,15 @@ minetest.override_item("farming:oat", {
 	groups = {food_oats = 1, flammable = 4}
 })
 
+minetest.override_item("farming:oat_1", {drop = {}})
+minetest.override_item("farming:oat_2", {drop = {}})
+minetest.override_item("farming:oat_3", {drop = {}})
+
 minetest.register_craft({
-	type = "shapeless",
 	output = "farming:flour",
 	recipe = {
-		"farming:oat", "farming:oat", "farming:oat", "farming:oat",
-		"farming:mortar_pestle"
+		{"farming:oat", "farming:oat", "farming:oat"},
+		{"farming:oat", "farming:mortar_pestle", ""}
 	},
 	replacements = {{"group:food_mortar_pestle", "farming:mortar_pestle"}}
 })
@@ -68,6 +74,10 @@ minetest.override_item("farming:rice", {
 	groups = {food_rice = 1, flammable = 4}
 })
 
+minetest.override_item("farming:rice_1", {drop = {}})
+minetest.override_item("farming:rice_2", {drop = {}})
+minetest.override_item("farming:rice_3", {drop = {}})
+
 minetest.register_craftitem("farming:rice_bread", {
 	description = S("Rice Bread"),
 	inventory_image = "farming_rice_bread.png",
@@ -82,11 +92,10 @@ minetest.register_craftitem("farming:rice_flour", {
 })
 
 minetest.register_craft({
-	type = "shapeless",
 	output = "farming:rice_flour",
 	recipe = {
-		"farming:rice", "farming:rice", "farming:rice", "farming:rice",
-		"farming:mortar_pestle"
+		{"farming:rice", "farming:rice", "farming:rice"},
+		{"farming:rice", "farming:mortar_pestle", ""}
 	},
 	replacements = {{"group:food_mortar_pestle", "farming:mortar_pestle"}}
 })
