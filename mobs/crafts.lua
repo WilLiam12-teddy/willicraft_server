@@ -10,9 +10,9 @@ minetest.register_craftitem("mobs:nametag", {
 
 if minetest.get_modpath("dye") and minetest.get_modpath("farming") then
 	minetest.register_craft({
-		type = "shapeless",
+--		type = "shapeless",
 		output = "mobs:nametag",
-		recipe = {"default:paper", "dye:black", "farming:string"}
+		recipe = {{"default:paper", "dye:black", "farming:string"}}
 	})
 end
 
@@ -112,6 +112,22 @@ minetest.register_craft({
 		{"default:stone", "default:stone", "default:stone"},
 		{"default:stone", "default:goldblock", "default:stone"},
 		{"default:stone", "default:stone", "default:stone"}
+	}
+})
+
+-- level 2 protection rune
+minetest.register_craftitem("mobs:protector2", {
+	description = S("Mob Protection Rune (Level 2)"),
+	inventory_image = "mobs_protector2.png",
+	groups = {flammable = 2}
+})
+
+minetest.register_craft({
+	output = "mobs:protector2",
+	recipe = {
+		{"mobs:protector", "default:mese_crystal", "mobs:protector"},
+		{"default:mese_crystal", "default:diamondblock", "default:mese_crystal"},
+		{"mobs:protector", "default:mese_crystal", "mobs:protector"}
 	}
 })
 
@@ -283,12 +299,18 @@ minetest.register_tool(":mobs:mob_reset_stick", {
 
 			tex_obj = obj
 
+			-- get base texture
+			local bt = tex_obj:get_luaentity().base_texture[1]
+
+			if type(bt) ~= "string" then
+				bt = ""
+			end
+
 			local name = user:get_player_name()
-			local tex = ""
 
 			minetest.show_formspec(name, "mobs_texture", "size[8,4]"
 			.. "field[0.5,1;7.5,0;name;"
-			.. minetest.formspec_escape(S("Enter texture:")) .. ";" .. tex .. "]"
+			.. minetest.formspec_escape(S("Enter texture:")) .. ";" .. bt .. "]"
 			.. "button_exit[2.5,3.5;3,1;mob_texture_change;"
 			.. minetest.formspec_escape(S("Change")) .. "]")
 		end
@@ -346,10 +368,10 @@ minetest.register_node("mobs:meatblock", {
 
 minetest.register_craft({
 	output = "mobs:meatblock",
-	type = "shapeless",
+--	type = "shapeless",
 	recipe = {
-		"group:food_meat", "group:food_meat", "group:food_meat",
-		"group:food_meat", "group:food_meat", "group:food_meat",
-		"group:food_meat", "group:food_meat", "group:food_meat"
+		{"group:food_meat", "group:food_meat", "group:food_meat"},
+		{"group:food_meat", "group:food_meat", "group:food_meat"},
+		{"group:food_meat", "group:food_meat", "group:food_meat"}
 	}
 })
