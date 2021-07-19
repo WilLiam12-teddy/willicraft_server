@@ -5,7 +5,7 @@ default = default or {
 	node_sound_wood_defaults = function(table) end,
 	gui_bg = "",
 	gui_bg_img = "",
-	gui_slots = "",
+	gui_slots = ""
 }
 
 -- Load support for intllib.
@@ -177,10 +177,10 @@ local protector_formspec = function(meta)
 				checkbox_faction = true
 			end
 		else
-			if factions.get_player_factions(meta:get_string("owner")) ~= nil then
-				if next(factions.get_player_faction(meta:get_string("owner"))) then
-					checkbox_faction = true
-				end
+			local player_factions = factions.get_player_factions(meta:get_string("owner"))
+
+			if player_factions ~= nil and #player_factions >= 1 then
+				checkbox_faction = true
 			end
 		end
 	end
@@ -374,9 +374,9 @@ function minetest.is_protected(pos, digger)
 			if protector_hurt > 0 and player:get_hp() > 0 then
 
 				-- This delay fixes item duplication bug (thanks luk3yx)
-				minetest.after(0.1, function()
+				minetest.after(0.1, function(player)
 					player:set_hp(player:get_hp() - protector_hurt)
-				end)
+				end, player)
 			end
 
 			-- flip player when protection violated
@@ -578,6 +578,7 @@ minetest.register_node("protector:protect2", {
 	inventory_image = "protector_logo.png",
 	sounds = default.node_sound_stone_defaults(),
 	groups = {dig_immediate = 2, unbreakable = 1},
+	use_texture_alpha = "clip",
 	paramtype = "light",
 	paramtype2 = "wallmounted",
 	legacy_wallmounted = true,
