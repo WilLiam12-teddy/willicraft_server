@@ -3,6 +3,11 @@ local pictures = {  ["w_dia"]="Dia",
                     ["dia_mkt1"]="Dia_Mkt1",
                     ["dia_mkt2"]="Dia_Mkt2",
                     ["texture_1"]="Diaaa",
+                    ["fruits"]="Fruits",
+                    ["meat"]="Fresh Meats",
+                    ["bakery"]="Bakery",
+                    ["new"]="New Dia",
+
 
 
 }
@@ -83,4 +88,16 @@ minetest.register_node("dia:asphalt", {
     tiles = {"asphalt.jpg"},
     is_ground_content = true,
     groups = {cracky=3, stone=1}
+})
+
+minetest.register_node("dia:drinkmachine", {
+	description = ("Dia Drink Machine"),
+  drawtype = "mesh",
+	mesh = "snack_machine.obj",
+  inventory_image = "drink_machine_inv.png",
+  paramtype = "light",
+  paramtype2 = "facedir",
+  light_source = 15,
+  tiles = {"drink_machine.png"},
+  groups = {snappy=3},
 })
