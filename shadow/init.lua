@@ -1,3 +1,32 @@
+
+-- BLOCO DE SPAWN PARA BALROG ( SUPORTE BALROG )
+
+minetest.register_node("shadow:balrog_spawn", {
+    description = "balrog spawn",
+    tiles = {"spawn_block_balrog.png"},
+    is_ground_content = true,
+    groups = {cracky=2, stone=1}
+})
+
+
+minetest.register_node("shadow:spawn_2", {
+    description = "spawn 2",
+    tiles = {"spawn_block_2.png"},
+    is_ground_content = true,
+    groups = {cracky=2, stone=1}
+})
+
+
+minetest.register_node("shadow:spawn_3", {
+    description = "spawn 3",
+    tiles = {"spawn_block_3.png"},
+    is_ground_content = true,
+    groups = {cracky=2, stone=1}
+})
+
+
+-- BLOCOS E MINERIOS
+
 minetest.register_node("shadow:stonebrick", {
     description = "Shadow Stone Brick",
     tiles = {"shadow_stone_brick.png"},
@@ -22,6 +51,8 @@ minetest.register_craftitem("shadow:shadow", {
     inventory_image = "diamond_shadow.png"
 })
 
+
+-- diamante red 
 minetest.register_craft({
     type = "shaped",
     output = "shadow:red_diamond 09",
@@ -42,7 +73,24 @@ minetest.register_craft({
     }
 })
 
+-- DIAMANTE SHADOW
+
+minetest.register_craft({
+    type = "shaped",
+    output = "shadow:shadow",
+    recipe = {
+        {"", "",                         ""},
+        {"default:diamond", "shadow:red_diamond",  ""},
+        {"", "",  ""}
+    }
+})
+
+
+
+-- TOOLS
+
 minetest.register_tool("shadow:sword", {
+        wield_scale = {x=1.5,y=1.5,z=2.5},
 	description = ("Shadow Sword"),
 	inventory_image = "tool_sword_shadow.png",
 	tool_capabilities = {
@@ -58,6 +106,7 @@ minetest.register_tool("shadow:sword", {
 })
 
 minetest.register_tool("shadow:pick", {
+        wield_scale = {x=1.5,y=1.5,z=2.5},
 	description = ("Shadow Pickaxe"),
 	inventory_image = "tool_pick_shadow.png",
 	tool_capabilities = {
@@ -73,6 +122,7 @@ minetest.register_tool("shadow:pick", {
 })
 
 minetest.register_tool("shadow:axe", {
+        wield_scale = {x=1.5,y=1.5,z=2.5},
 	description = ("Shadow Axe"),
 	inventory_image = "tool_axe_shadow.png",
 	tool_capabilities = {
@@ -88,6 +138,7 @@ minetest.register_tool("shadow:axe", {
 })
 
 minetest.register_tool("shadow:shovel", {
+        wield_scale = {x=1.5,y=1.5,z=2.5},
 	description = ("Shadow Shovel"),
 	inventory_image = "tool_shovel_shadow.png",
 	wield_image = "tool_shovel_shadow.png^[transformR90",
